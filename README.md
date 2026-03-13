@@ -54,7 +54,7 @@ cp .env.example .env
 
 | Variable | Description | Exemple |
 |----------|-------------|---------|
-| `DATABASE_URL` | URL de connexion MySQL | `mysql://root:pass@localhost:3306/commune_connecte` |
+| `DATABASE_URL` | URL de connexion MySQL | `mysql://root:pass@localhost:3306/commune_connecte_db` |
 | `PORT` | Port de l'API HTTP | `2025` |
 | `SOCKET_PORT` | Port WebSocket Socket.io | `2026` |
 | `JWT_SECRET` | Clé secrète JWT (min 32 chars) | `123456789` |
