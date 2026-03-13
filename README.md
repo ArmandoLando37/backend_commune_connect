@@ -41,7 +41,11 @@ npm install
 cp .env.example .env
 # Éditer .env avec vos valeurs (DATABASE_URL, JWT_SECRET, etc.)
 ```
+## SOKAFANA NY XAMP NA WAMP
 
+## LANCER-na ny commance  npx prisma migrate dev
+
+## LANCER-na ny commance  npm run db:seed
 ---
 
 ## 🔧 Configuration
@@ -53,7 +57,7 @@ cp .env.example .env
 | `DATABASE_URL` | URL de connexion MySQL | `mysql://root:pass@localhost:3306/commune_connecte` |
 | `PORT` | Port de l'API HTTP | `2025` |
 | `SOCKET_PORT` | Port WebSocket Socket.io | `2026` |
-| `JWT_SECRET` | Clé secrète JWT (min 32 chars) | `super_secret_key_2026` |
+| `JWT_SECRET` | Clé secrète JWT (min 32 chars) | `123456789` |
 | `JWT_EXPIRES_IN` | Durée du token | `7d` |
 | `CLIENT_URL` | URL du frontend React | `http://localhost:5173` |
 | `UPLOAD_DIR` | Dossier de stockage fichiers | `./storage` |
