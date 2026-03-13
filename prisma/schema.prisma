@@ -1,0 +1,236 @@
+// prisma/schema.prisma
+// Schéma de base de données pour CommuneConnecte
+// ORM: Prisma | DB: MySQL 8.0+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────
+// ÉNUMÉRATION DES RÔLES COMMUNAUX
+// ─────────────────────────────────────────
+enum Role {
+  ADMIN
+  MAIRE
+  ADJOINT_MAIRE
+  SECRETAIRE_COMMUNAL
+  ARCHIVISTE
+  ETAT_CIVIL
+  TRESORERIE
+  PERCEPTEUR
+  REGISSEUR
+}
+
+// ─────────────────────────────────────────
+// ÉNUMÉRATION DES STATUTS DE COMPTE
+// ─────────────────────────────────────────
+enum UserStatus {
+  EN_ATTENTE   // Inscription soumise, en attente de validation admin
+  ACTIF        // Compte validé et actif
+  SUSPENDU     // Compte temporairement suspendu
+  REJETE       // Inscription rejetée par l'admin
+}
+
+// ─────────────────────────────────────────
+// ÉNUMÉRATION DES STATUTS DE RAPPORT
+// ─────────────────────────────────────────
+enum RapportStatut {
+  BROUILLON  // Visible uniquement par le créateur
+  SOUMIS     // Publié et visible par les rôles autorisés
+  MODIFIE    // Modifié après publication (historique conservé)
+  ARCHIVE    // Lecture seule, non modifiable
+  SIGNALE    // Rapport ayant reçu un avertissement admin
+}
+
+// ─────────────────────────────────────────
+// TABLE: users
+// ─────────────────────────────────────────
+model User {
+  id               Int        @id @default(autoincrement())
+  name             String     @db.VarChar(150)
+  email            String     @unique @db.VarChar(255)
+  password         String     @db.VarChar(255)
+  avatar           String?    @db.VarChar(500)
+  role             Role       @default(ETAT_CIVIL)
+  proposedRole     Role?      // Rôle proposé lors de l'inscription
+  status           UserStatus @default(EN_ATTENTE)
+  suspensionMotif  String?    @db.Text
+  suspensionFin    DateTime?
+  emailVerifiedAt  DateTime?
+  lastLoginAt      DateTime?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  // Relations
+  rapports         Rapport[]           @relation("RapportCreateur")
+  stars            RapportStar[]
+  reads            RapportRead[]
+  mentions         RapportMention[]
+  notifications    Notification[]
+  auditLogs        AuditLog[]
+  rapportVersions  RapportVersion[]    @relation("VersionAuteur")
+  warnings         Warning[]           @relation("WarningAdmin")
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────────
+// TABLE: rapports
+// ─────────────────────────────────────────
+model Rapport {
+  id          Int            @id @default(autoincrement())
+  objet       String         @db.VarChar(300)
+  description String         @db.LongText
+  fichier     String?        @db.VarChar(500)  // Chemin du fichier joint
+  tags        String?        @db.VarChar(500)  // Tags séparés par virgule
+  statut      RapportStatut  @default(BROUILLON)
+  userId      Int
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  publishedAt DateTime?      // Date de première publication
+
+  // Relations
+  user        User            @relation("RapportCreateur", fields: [userId], references: [id], onDelete: Cascade)
+  roles       RapportRole[]   // Rôles ayant accès au rapport
+  stars       RapportStar[]
+  reads       RapportRead[]
+  mentions    RapportMention[]
+  versions    RapportVersion[]
+  warnings    Warning[]
+
+  @@map("rapports")
+}
+
+// ─────────────────────────────────────────
+// TABLE: rapport_roles (visibilité par rôle)
+// ─────────────────────────────────────────
+model RapportRole {
+  id         Int    @id @default(autoincrement())
+  rapportId  Int
+  role       Role
+
+  rapport    Rapport @relation(fields: [rapportId], references: [id], onDelete: Cascade)
+
+  @@unique([rapportId, role])
+  @@map("rapport_roles")
+}
+
+// ─────────────────────────────────────────
+// TABLE: rapport_stars
+// ─────────────────────────────────────────
+model RapportStar {
+  id         Int      @id @default(autoincrement())
+  rapportId  Int
+  userId     Int
+  createdAt  DateTime @default(now())
+
+  rapport    Rapport  @relation(fields: [rapportId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([rapportId, userId])
+  @@map("rapport_stars")
+}
+
+// ─────────────────────────────────────────
+// TABLE: rapport_reads (accusés de lecture)
+// ─────────────────────────────────────────
+model RapportRead {
+  id         Int      @id @default(autoincrement())
+  rapportId  Int
+  userId     Int
+  readAt     DateTime @default(now())
+
+  rapport    Rapport  @relation(fields: [rapportId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([rapportId, userId])
+  @@map("rapport_reads")
+}
+
+// ─────────────────────────────────────────
+// TABLE: rapport_mentions
+// ─────────────────────────────────────────
+model RapportMention {
+  id         Int      @id @default(autoincrement())
+  rapportId  Int
+  userId     Int
+  createdAt  DateTime @default(now())
+
+  rapport    Rapport  @relation(fields: [rapportId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([rapportId, userId])
+  @@map("rapport_mentions")
+}
+
+// ─────────────────────────────────────────
+// TABLE: rapport_versions (historique)
+// ─────────────────────────────────────────
+model RapportVersion {
+  id          Int      @id @default(autoincrement())
+  rapportId   Int
+  objet       String   @db.VarChar(300)
+  description String   @db.LongText
+  userId      Int      // Auteur de la modification
+  createdAt   DateTime @default(now())
+
+  rapport     Rapport  @relation(fields: [rapportId], references: [id], onDelete: Cascade)
+  user        User     @relation("VersionAuteur", fields: [userId], references: [id])
+
+  @@map("rapport_versions")
+}
+
+// ─────────────────────────────────────────
+// TABLE: notifications
+// ─────────────────────────────────────────
+model Notification {
+  id           Int       @id @default(autoincrement())
+  type         String    @db.VarChar(100)  // ex: NOUVEAU_RAPPORT, MENTION, COMPTE_VALIDE
+  notifiableId Int       // ID de l'utilisateur destinataire
+  data         Json      // Données contextuelles (rapportId, message, etc.)
+  readAt       DateTime?
+  createdAt    DateTime  @default(now())
+
+  user         User      @relation(fields: [notifiableId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+// ─────────────────────────────────────────
+// TABLE: audit_logs (journal immuable)
+// ─────────────────────────────────────────
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?     // Null si action système
+  action    String   @db.VarChar(100)  // ex: LOGIN, CREATE_RAPPORT, DELETE_USER
+  model     String?  @db.VarChar(100)  // ex: Rapport, User
+  modelId   Int?
+  metadata  Json?    // Données supplémentaires
+  ipAddress String?  @db.VarChar(45)
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}
+
+// ─────────────────────────────────────────
+// TABLE: warnings (avertissements admin)
+// ─────────────────────────────────────────
+model Warning {
+  id        Int      @id @default(autoincrement())
+  rapportId Int
+  adminId   Int
+  message   String   @db.Text
+  createdAt DateTime @default(now())
+
+  rapport   Rapport  @relation(fields: [rapportId], references: [id], onDelete: Cascade)
+  admin     User     @relation("WarningAdmin", fields: [adminId], references: [id])
+
+  @@map("warnings")
+}

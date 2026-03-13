@@ -1,0 +1,16 @@
+on va realiser le partie front de ce projet, react js,vite, js vannila, tailwindcss,et toutes lec ecosysteme react pour faire le front du projet en meilleure,
+Palette couleur – CommuneConnecte
+* Thème Clair (Light mode) – principal:
+   * RôleNom suggestionHexRGBUtilisation principalePrimary (principal)Bleu Institutionnel#004C8C0, 76, 140En-têtes, boutons principaux, liens actifs, sidebarPrimary DarkBleu foncé#0033660, 51, 102Hover / focus principalPrimary LightBleu clair Madagascar#E6F0FF230, 240, 255Fond de cartes, accents légersAccent RougeRouge Drapeau#D81E05216, 30, 5Alertes importantes, suppression, erreursAccent VertVert Drapeau#007E3A0, 126, 58Succès, validation, archivage, statut "lu"Neutre – BackgroundGris très clair#F8FAFC248, 250, 252Fond principal de pageNeutre – SurfaceBlanc#FFFFFF255, 255, 255Cartes, modals, formulairesText PrimaryGris très foncé#1F293731, 41, 55Texte principalText SecondaryGris moyen#6B7280107, 114, 128Sous-titres, labels, dates
+   * Thème Sombre (Dark mode):
+   * RôleNom suggestionHexRGBUtilisation principalePrimaryBleu sombre institutionnel#60A5FA96, 165, 250Boutons, liens, éléments interactifs principauxPrimary DarkBleu très sombre#1E40AF30, 64, 175Fond des boutons principaux hoverBackgroundGris très foncé#0F172A15, 23, 42Fond global de l’applicationSurfaceGris foncé#1E293B30, 41, 59Cartes, modals, tableauxText PrimaryGris très clair#F1F5F9241, 245, 249Texte principalText SecondaryGris clair#94A3B8148, 163, 184Métadonnées, labelsAccent RougeRouge vif atténué#F87171248, 113, 113Alertes, erreursAccent VertVert atténué#4ADE8074, 222, 128Succès, validé
+* 
+
+utilisation concrètes
+* Logo / Barre latérale (sidebar) → Bleu institutionnel #004C8C (clair) ou #0F172A (sombre)
+* Boutons "Créer rapport" / "Valider" → Bleu principal + texte blanc
+* Boutons "Supprimer" / "Signaler" → Rouge drapeau
+* Icône "Archivé" / "Lu" / "Succès" → Vert drapeau
+* Notifications importantes → Bandeau rouge clair (light) ou rouge atténué (dark)
+* Tableaux / Cartes de rapports → Fond blanc/gris très clair (light) ou gris foncé (dark)
+* Mentions @utilisateur → Bleu clair ou bleu pastel en surbrillance
