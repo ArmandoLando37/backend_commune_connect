@@ -15,6 +15,7 @@ datasource db {
 // ÉNUMÉRATION DES RÔLES COMMUNAUX
 // ─────────────────────────────────────────
 enum Role {
+  TOUS
   ADMIN
   MAIRE
   ADJOINT_MAIRE

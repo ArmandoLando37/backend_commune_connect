@@ -96,6 +96,7 @@ export const addWarning = async (req, res, next) => {
 export const getDashboard = async (req, res, next) => {
   try {
     const stats = await adminService.getDashboardStats();
+    console.log("admin.controler stats :: ",stats)
     return sendSuccess(res, stats, 'Statistiques récupérées.');
   } catch (error) {
     next(error);

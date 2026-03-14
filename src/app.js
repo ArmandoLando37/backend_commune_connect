@@ -16,9 +16,9 @@ import errorHandler from './middlewares/errorHandler.middleware.js';
 
 // Routes
 import authRoutes from './routes/auth.routes.js';
-import rapportRoutes from './routes/users.routes.js';
-import adminRoutes from './routes/admin.routes.js';
+import rapportRoutes from './routes/rapport.routes.js';
 import notificationRoutes from './routes/notifications.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 
 const app = express();
 

@@ -5,7 +5,7 @@
 
 import * as rapportService from '../services/profile.service.js';
 import { sendSuccess, sendError, sendPaginated } from '../utils/response.utils.js';
-import { notifyMultiple, createNotification } from '../services/notification.service.js';
+import { notifyMultiple } from '../services/notification.service.js';
 import { getNotificationTargets } from '../services/profile.service.js';
 
 /**
@@ -27,7 +27,11 @@ export const listRapports = async (req, res, next) => {
  */
 export const getRapport = async (req, res, next) => {
   try {
-    const rapport = await rapportService.getRapportById(parseInt(req.params.id), req.user);
+    const id = parseInt(req.params.id);
+    if (!id || isNaN(id)) {
+      return sendError(res, 'ID de rapport invalide.', 400);
+    }
+    const rapport = await rapportService.getRapportById(id, req.user);
     return sendSuccess(res, { rapport });
   } catch (error) {
     next(error);
@@ -137,6 +141,19 @@ export const archiverRapport = async (req, res, next) => {
   try {
     const rapport = await rapportService.archiverRapport(parseInt(req.params.id), req.user);
     return sendSuccess(res, { rapport }, 'Rapport archivé avec succès.');
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * GET /api/rapports/mention-search?q=...
+ * Recherche d'utilisateurs actifs pour l'autocomplete @mention
+ */
+export const searchMentionUsers = async (req, res, next) => {
+  try {
+    const users = await rapportService.searchMentionUsers(req.query.q || '');
+    return sendSuccess(res, { users });
   } catch (error) {
     next(error);
   }

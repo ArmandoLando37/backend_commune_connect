@@ -77,7 +77,8 @@ export const updateProfileSchema = Joi.object({
       'string.min': 'Le nouveau mot de passe doit contenir au moins 8 caractères',
       'string.pattern.base': 'Le nouveau mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre',
     }),
-}).min(1).messages({ 'object.min': 'Au moins un champ à modifier est requis' });
+}).min(0).messages({ 'object.min': 'Au moins un champ à modifier est requis' });
+
 
 /**
  * Schéma de validation pour la suppression de compte

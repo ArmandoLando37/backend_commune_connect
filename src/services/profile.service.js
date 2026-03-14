@@ -467,3 +467,25 @@ const checkRapportAccess = (rapport, user) => {
 
   return false;
 };
+
+/**
+ * Recherche d'utilisateurs actifs pour l'autocomplete @mention.
+ * @param {string} q - Terme de recherche
+ * @returns {Array}
+ */
+export const searchMentionUsers = async (q) => {
+  if (!q || q.trim().length < 1) return [];
+
+  return prisma.user.findMany({
+    where: {
+      status: 'ACTIF',
+      OR: [
+        { name: { contains: q.trim() } },
+        { email: { contains: q.trim() } },
+      ],
+    },
+    select: { id: true, name: true, role: true, avatar: true },
+    take: 10,
+    orderBy: { name: 'asc' },
+  });
+};

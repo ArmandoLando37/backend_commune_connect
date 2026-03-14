@@ -10,10 +10,10 @@ import { authorize } from '../middlewares/authorize.middleware.js';
 import { validate } from '../validators/rapport.validator.js';
 import { validateUserSchema, suspendUserSchema, warningSchema } from '../validators/rapport.validator.js';
 
-const router = Router();
+const adminRoutes = Router();
 
 // Toutes les routes admin nécessitent authentification + rôle ADMIN
-router.use(authenticate, authorize('ADMIN'));
+adminRoutes.use(authenticate, authorize('ADMIN'));
 
 /**
  * @swagger
@@ -49,7 +49,7 @@ router.use(authenticate, authorize('ADMIN'));
  *       403:
  *         description: Accès réservé à l'administrateur
  */
-router.get('/dashboard', adminController.getDashboard);
+adminRoutes.get('/dashboard', adminController.getDashboard);
 
 /**
  * @swagger
@@ -68,7 +68,7 @@ router.get('/dashboard', adminController.getDashboard);
  *       200:
  *         description: Données de graphique d'évolution
  */
-router.get('/stats/rapports', adminController.getRapportStats);
+adminRoutes.get('/stats/rapports', adminController.getRapportStats);
 
 /**
  * @swagger
@@ -102,7 +102,7 @@ router.get('/stats/rapports', adminController.getRapportStats);
  *       200:
  *         description: Liste paginée des utilisateurs
  */
-router.get('/users', adminController.getUsers);
+adminRoutes.get('/users', adminController.getUsers);
 
 /**
  * @swagger
@@ -139,7 +139,7 @@ router.get('/users', adminController.getUsers);
  *       400:
  *         description: Compte pas en statut EN_ATTENTE
  */
-router.patch('/users/:id/validate', validate(validateUserSchema), adminController.validateUser);
+adminRoutes.patch('/users/:id/validate', validate(validateUserSchema), adminController.validateUser);
 
 /**
  * @swagger
@@ -170,7 +170,7 @@ router.patch('/users/:id/validate', validate(validateUserSchema), adminControlle
  *       200:
  *         description: Compte suspendu, utilisateur notifié
  */
-router.patch('/users/:id/suspend', validate(suspendUserSchema), adminController.suspendUser);
+adminRoutes.patch('/users/:id/suspend', validate(suspendUserSchema), adminController.suspendUser);
 
 /**
  * @swagger
@@ -188,7 +188,7 @@ router.patch('/users/:id/suspend', validate(suspendUserSchema), adminController.
  *       200:
  *         description: Utilisateur supprimé
  */
-router.delete('/users/:id', adminController.deleteUser);
+adminRoutes.delete('/users/:id', adminController.deleteUser);
 
 /**
  * @swagger
@@ -219,6 +219,6 @@ router.delete('/users/:id', adminController.deleteUser);
  *       201:
  *         description: Avertissement créé, propriétaire notifié
  */
-router.post('/rapports/:id/warning', validate(warningSchema), adminController.addWarning);
+adminRoutes.post('/rapports/:id/warning', validate(warningSchema), adminController.addWarning);
 
-export default router;
+export default adminRoutes;

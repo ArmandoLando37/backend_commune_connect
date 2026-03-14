@@ -1,4 +1,4 @@
-window.onload = function() {
+t awindow.onload = function() {
   // Build a system
   var url = window.location.search.match(/url=([^&]+)/);
   if (url && url.length > 1) {

@@ -58,7 +58,7 @@ export const sendPaginated = (res, items, meta, message = 'Succès') => {
  */
 export const getPaginationParams = (page = 1, limit = 25) => {
   const parsedPage = Math.max(1, parseInt(page));
-  const parsedLimit = Math.min(100, Math.max(1, parseInt(limit)));
+  const parsedLimit = Math.min(1000, Math.max(1, parseInt(limit)));
   return {
     skip: (parsedPage - 1) * parsedLimit,
     take: parsedLimit,

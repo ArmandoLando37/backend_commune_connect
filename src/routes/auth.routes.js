@@ -125,6 +125,10 @@ authRoutes.post('/logout', authenticate, authController.logout);
  */
 authRoutes.get('/me', authenticate, authController.getMe);
 
+const test=(req,res,next)=>{
+  console.log("req update profile :: ",req.params)
+  next()
+}
 /**
  * @swagger
  * /auth/profile:
@@ -157,6 +161,7 @@ authRoutes.get('/me', authenticate, authController.getMe);
  */
 authRoutes.put(
   '/profile',
+  test,
   authenticate,
   uploadAvatar.single('avatar'),
   validate(updateProfileSchema),

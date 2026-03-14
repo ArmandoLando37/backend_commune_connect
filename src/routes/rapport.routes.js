@@ -1,5 +1,5 @@
 /**
- * @file users.routes.js
+ * @file rapport.routes.js
  * @description Routes pour la gestion des rapports communaux (CRUD, stars, lecteurs, archivage)
  */
 
@@ -16,10 +16,10 @@ import {
   validate,
 } from '../validators/rapport.validator.js';
 
-const rapportRoutes = Router();
+const router = Router();
 
 // Toutes les routes nécessitent une authentification
-rapportRoutes.use(authenticate);
+router.use(authenticate);
 
 /**
  * @swagger
@@ -83,7 +83,7 @@ rapportRoutes.use(authenticate);
  *                 meta:
  *                   $ref: '#/components/schemas/PaginationMeta'
  */
-rapportRoutes.get('/', validate(listRapportsQuerySchema, 'query'), rapportController.listRapports);
+router.get('/', validate(listRapportsQuerySchema, 'query'), rapportController.listRapports);
 
 /**
  * @swagger
@@ -113,7 +113,7 @@ rapportRoutes.get('/', validate(listRapportsQuerySchema, 'query'), rapportContro
  *       422:
  *         description: Données invalides
  */
-rapportRoutes.post(
+router.post(
   '/',
   checkPermission('creerRapport'),
   uploadRateLimiter,
@@ -147,7 +147,25 @@ rapportRoutes.post(
  *       404:
  *         description: Rapport introuvable
  */
-rapportRoutes.get('/:id', rapportController.getRapport);
+
+/**
+ * @swagger
+ * /rapports/mention-search:
+ *   get:
+ *     summary: Recherche d'utilisateurs pour les mentions @
+ *     tags: [Rapports]
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Liste des utilisateurs correspondants
+ */
+router.get('/mention-search', rapportController.searchMentionUsers);
+
+router.get('/:id', rapportController.getRapport);
 
 /**
  * @swagger
@@ -176,7 +194,7 @@ rapportRoutes.get('/:id', rapportController.getRapport);
  *       403:
  *         description: Délai 24h dépassé ou accès non autorisé
  */
-rapportRoutes.put(
+router.put(
   '/:id',
   uploadRateLimiter,
   upload.single('fichier'),
@@ -205,7 +223,7 @@ rapportRoutes.put(
  *       404:
  *         description: Rapport introuvable
  */
-rapportRoutes.delete('/:id', rapportController.deleteRapport);
+router.delete('/:id', rapportController.deleteRapport);
 
 /**
  * @swagger
@@ -236,7 +254,7 @@ rapportRoutes.delete('/:id', rapportController.deleteRapport);
  *                     starsCount:
  *                       type: integer
  */
-rapportRoutes.post('/:id/star', rapportController.toggleStar);
+router.post('/:id/star', rapportController.toggleStar);
 
 /**
  * @swagger
@@ -257,7 +275,7 @@ rapportRoutes.post('/:id/star', rapportController.toggleStar);
  *       403:
  *         description: Seul le propriétaire ou l'admin peut voir les lecteurs
  */
-rapportRoutes.get('/:id/readers', rapportController.getReaders);
+router.get('/:id/readers', rapportController.getReaders);
 
 /**
  * @swagger
@@ -278,6 +296,6 @@ rapportRoutes.get('/:id/readers', rapportController.getReaders);
  *       403:
  *         description: Non autorisé
  */
-rapportRoutes.post('/:id/archive', checkPermission('archiverRapport'), rapportController.archiverRapport);
+router.post('/:id/archive', checkPermission('archiverRapport'), rapportController.archiverRapport);
 
-export default rapportRoutes;
+export default router;

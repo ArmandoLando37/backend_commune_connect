@@ -3,7 +3,7 @@
  * @description Logique métier pour les fonctionnalités d'administration
  */
 
-import bcrypt from 'bcryptjs';
+// import bcrypt from 'bcryptjs';
 import prisma from '../config/database.config.js';
 import { getPaginationParams } from '../utils/response.utils.js';
 import { logAudit, AUDIT_ACTIONS } from '../utils/auditLog.utils.js';
@@ -271,8 +271,13 @@ export const getDashboardStats = async () => {
     prisma.rapport.findMany({
       orderBy: { createdAt: 'desc' },
       take: 10,
-      include: { user: { select: { id: true, name: true, role: true } } },
-      select: { id: true, objet: true, statut: true, createdAt: true, user: true },
+      select: {
+        id: true,
+        objet: true,
+        statut: true,
+        createdAt: true,
+        user: { select: { id: true, name: true, role: true } },
+      },
     }),
     prisma.user.findMany({
       where: { status: 'EN_ATTENTE' },
