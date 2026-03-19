@@ -25,9 +25,9 @@ apiServer.listen(API_PORT, HOST, () => {
   console.log('\n╔══════════════════════════════════════════╗');
   console.log('║        CommuneConnecte API               ║');
   console.log('╠══════════════════════════════════════════╣');
-  console.log(`║  🚀 API HTTP   : http://${HOST}:${API_PORT}   ║`);
-  console.log(`║  📚 Swagger    : http://${HOST}:${API_PORT}/api/docs ║`);
-  console.log(`║  🌍 Env        : ${(process.env.NODE_ENV || 'development').padEnd(23)}║`);
+  console.log(`║   API HTTP   : http://${HOST}:${API_PORT}   ║`);
+  console.log(`║   Swagger    : http://${HOST}:${API_PORT}/api/docs ║`);
+  console.log(`║   Env        : ${(process.env.NODE_ENV || 'development').padEnd(23)}║`);
   console.log('╚══════════════════════════════════════════╝\n');
 });
 
@@ -52,7 +52,7 @@ io.use(async (socket, next) => {
       socket.handshake.headers?.authorization ||
       '';
 
-    // ✅ Retirer le préfixe "Bearer " — c'est ici que ça plantait
+    //  Retirer le préfixe "Bearer " — c'est ici que ça plantait
     const token = raw.startsWith('Bearer ') ? raw.slice(7) : raw;
 
     if (!token) {
@@ -89,9 +89,12 @@ io.on('connection', (socket) => {
     message: `Bienvenue, ${user.name}!`,
     timestamp: new Date().toISOString(),
   });
-
+  socket.on("test",async ()=>{
+    console.log("coucouc socket")
+  })
   socket.on('notification:markRead', async (notificationId) => {
     try {
+      console.log("socket : notificationId:: ",notificationId)
       await prisma.notification.updateMany({
         where: { id: parseInt(notificationId), notifiableId: user.id },
         data: { readAt: new Date() },
@@ -107,7 +110,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', (reason) => {
-    console.log(`[Socket.io] 🔌 Déconnexion: ${user.name} - Raison: ${reason}`);
+    console.log(`[Socket.io]  Déconnexion: ${user.name} - Raison: ${reason}`);
   });
 
   socket.on('error', (error) => {
@@ -116,7 +119,7 @@ io.on('connection', (socket) => {
 });
 
 socketServer.listen(SOCKET_PORT, () => {
-  console.log(`  🔌 Socket.io   : http://localhost:${SOCKET_PORT}/socket\n`);
+  console.log(`   Socket.io   : http://localhost:${SOCKET_PORT}/socket\n`);
 });
 
 setIoInstance(io);
